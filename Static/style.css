@@ -11,12 +11,6 @@ body {
   background-color: #FF8C00;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  .VCenterAlignedContainer {
-    padding: 200px;
-  }
-  }
-
 .Text {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   text-align: center;
