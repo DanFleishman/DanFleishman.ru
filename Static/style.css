@@ -7,6 +7,10 @@ body {
   flex-direction: column;
 }
 
+.VCenterAlignedContainer {
+  padding: 200px;
+}
+
 .MainInfoBlock {
   background-color: #FF8C00;
 }
