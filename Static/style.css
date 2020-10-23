@@ -11,6 +11,12 @@ body {
   background-color: #FF8C00;
 }
 
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  .VCenterAlignedContainer {
+    padding: 200px;
+  }
+  }
+
 .Text {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   text-align: center;
@@ -92,7 +98,7 @@ body {
   margin-top: 16;
 }
 
-.footer {
+/* .footer {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   color: rgba(255, 255, 255, 0.300);
   position: absolute;
@@ -107,4 +113,4 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   color: rgba(255, 255, 255, 0.300);
   text-decoration: none;
-}
+} */
