@@ -26,13 +26,13 @@ body {
 .NameAgeBlock {
   font-weight: 400;
   font-size: 42;
-  margin: 20;
+  margin: 10;
 }
 
 .AdditionalInfoBlock {
   font-size: 21;
   font-weight: 200;
-  margin: 20;
+  margin: 0;
 }
 
 #HorizontalStack {
@@ -50,8 +50,13 @@ body {
   padding-right: 8;
 }
 
+.ContactImage:hover {
+  transform: scale(1.2); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+
 .ContactsBlock {
-  margin-top: 8;
+  margin-top: 15;
 }
 
 
@@ -59,7 +64,7 @@ body {
 
 
 
-/* .ImageBlock {
+.ImageBlock {
   display: block;
 
   width: 250px;
@@ -75,4 +80,4 @@ body {
   margin-left: auto;
   margin-right: auto;
   margin-top: 16; 
-} */
+}
