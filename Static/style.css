@@ -1,5 +1,5 @@
 body {
-  background-color: orange;
+  background-color: black;
   margin: auto;
   display: flex;
   align-items: center;
@@ -14,7 +14,7 @@ body {
 }
 
 .MainInfoBlock {
-  background-color: orange;
+  background-color: black;
 }
 
 .Text {
@@ -92,7 +92,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: orange;
+  background: black;
 }
 .bear {
   width: 100%;
@@ -226,6 +226,11 @@ body {
 
   width: 50%;
 }
+
+.ResumeBlock:hover {
+  transform: scale(1.1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
 
 .ResumeText {
   font-weight: 200;
