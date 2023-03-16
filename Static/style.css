@@ -2,11 +2,11 @@ body {
   background-color: black;
   margin: auto;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  height: 100vh;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -34,14 +34,14 @@ body {
 }
 
 .AdditionalInfoBlock {
-  font-size: 21px;
+  font-size: 21;
   font-weight: 200;
-  margin-top: -20px;
-  margin-bottom: 10px;
+  margin-bottom: 10;
+  margin-top: -20;
 }
 
 #HorizontalStack {
-  float: left;
+		float:left;
 }
 
 .CenteredContainer {
@@ -49,73 +49,107 @@ body {
 }
 
 .ContactImage {
-  width: 5vw;
-  height: 5vw;
-  padding: 1vw;
+  width: 50px;
+  height: 50px;
+  padding-left: 8;
+  padding-right: 8;
 }
 
 .ContactImage:hover {
-  transform: scale(1.2); 
+  transform: scale(1.2); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
 
+
 .ContactsBlock {
-  margin-top: 1.5vw;
+  margin-top: 15;
+}
+
+
+
+
+
+
+.ImageBlock {
+  display: block;
+
+  width: 250px;
+  height: 250px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+  border-color: white;
+  border-width: 3px;
+  border-style: solid;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 16; 
+}
+
+
+
+
+/* ---- reset ---- */
+/* body {
+  margin: 0;
+  font: normal 75% Arial, Helvetica, sans-serif;
+} */
+canvas {
+  display: block;
+  vertical-align: bottom;
+} /* ---- particles.js container ---- */
+#particles-js {
+  position: fixed;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* чтобы клики на фоне не проходили */
 }
 
 .ImageBlock {
   display: block;
-  width: 25vw;
-  height: 25vw;
+
+  width: 250px;
+  height: 250px;
+
   object-fit: cover;
+
   border-radius: 50%;
   border-color: white;
-  border-width: 0.15vw;
+  border-width: 3px;
   border-style: solid;
-  margin: 3vw auto 0;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 16; 
 }
 
-/* particles.js container */
-#particles-js {
-  position: fixed;
-  z-index: -1;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
 
 .ResumeBlock {
-  border-radius: 3vw;
+  border-radius: 30pt;
   text-align: center;
   border-color: white;
-  border-width: 0.1vw;
+  border-width: 1px;
   border-style: solid;
-  margin: 5vw auto 0;
+
+  margin-top: 32px;
+  margin-left: auto;
+  margin-right: auto;
+
   width: 50%;
 }
 
 .ResumeBlock:hover {
-  transform: scale(1.1); 
+  transform: scale(1.1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
+
 
 .ResumeText {
   font-weight: 200;
-  font-size: 1.8vw;
+  font-size: 18;
 }
 
-@media only screen and (max-width: 600px) {
-  .NameAgeBlock {
-    font-size: 28px;
-  }
-
-  .AdditionalInfoBlock {
-    font-size: 18px;
-  }
-
-  .ResumeBlock {
-    width: 80%;
-  }
-
-  .ResumeText {
-    font-size: 14px;
-  }
+.VCenterAlignedContainer {
 }
+
