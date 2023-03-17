@@ -1,3 +1,4 @@
+
 body {
   background-color: black;
   margin: auto;
@@ -22,7 +23,7 @@ body {
 }
 
 .Text {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Roboto', sans-serif;
   text-align: center;
   color: white;
 }
