@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Змейка</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="startScreen" class="overlay">
+        <div class="menu-box">
+            <h2>Змейка</h2>
+            <button class="menu-button" onclick="startGame()">Начать игру</button>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="overlay hidden">
+        <div class="menu-box">
+            <h2>Игра окончена!</h2>
+            <p id="finalScore"></p>
+            <p id="finalSpeed"></p>
+            <p id="finalLength"></p>
+            <button class="menu-button" onclick="restartGame()">Играть снова</button>
+        </div>
+    </div>
+
+    <div id="pauseScreen" class="overlay hidden">
+        <div class="menu-box">
+            <h2>Пауза</h2>
+            <button class="menu-button" onclick="resumeGame()">Продолжить</button>
+            <button class="menu-button" onclick="restartGame()">Начать сначала</button>
+            <button class="menu-button" onclick="openSettings()">Настройки</button>
+        </div>
+    </div>
+
+    <button id="pauseButton" class="hidden">
+        <div class="pause-icon"></div>
+    </button>
+
+    <div id="gameContainer" class="hidden">
+        <div id="score">Счёт: 0 | Скорость: 5 ход/сек</div>
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
