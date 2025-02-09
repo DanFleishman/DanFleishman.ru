@@ -27,6 +27,11 @@ const GAME_CONFIG = {
             MOBILE: 20,
             DESKTOP: 30
         }
+    },
+    CONTROL_ZONE: {
+        WIDTH: 150,    // Ширина зоны управления в пикселях
+        HEIGHT: 150,   // Высота зоны управления
+        BOTTOM_OFFSET: 20  // Отступ от низа экрана
     }
 };
 
@@ -355,7 +360,10 @@ function openSettings() {
                            max="${GAME_CONFIG.GRID_SCALE.MAX}" 
                            value="${savedScale}"
                            step="1"
-                           oninput="updateGridScale(this.value)">
+                           oninput="updateGridScale(this.value)"
+                           ontouchstart="this.oninput()"
+                           ontouchmove="this.oninput()"
+                           ontouchend="this.oninput()">
                     <span id="scaleLabel">${Math.round((1/savedScale) * 100)}%</span>
                 </div>
             </div>
@@ -368,7 +376,10 @@ function openSettings() {
                            max="${GAME_CONFIG.SPEED_RANGE.MAX}" 
                            value="${savedSpeed}"
                            step="10"
-                           oninput="updateSpeedLabel(this.value)">
+                           oninput="updateSpeedLabel(this.value)"
+                           ontouchstart="this.oninput()"
+                           ontouchmove="this.oninput()"
+                           ontouchend="this.oninput()">
                     <span id="speedLabel">${Math.round(1000/savedSpeed * 10) / 10} ход/сек</span>
                 </div>
             </div>
@@ -438,11 +449,11 @@ function handleTouchEnd(e) {
     const touchEndX = e.changedTouches[0].clientX;
     const touchEndY = e.changedTouches[0].clientY;
     
-    // Если это был короткий тап (начальные и конечные координаты близки)
-    if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+    // Обрабатываем как тап в любом случае
+    if (isMobile) {
         handleTapControl(touchEndX, touchEndY);
-    } 
-    // Иначе обрабатываем как свайп
+    }
+    // Для свайпов оставляем старую логику
     else if (Math.abs(touchEndX - touchStartX) > GAME_CONFIG.SWIPE_THRESHOLD || 
              Math.abs(touchEndY - touchStartY) > GAME_CONFIG.SWIPE_THRESHOLD) {
         handleSwipeControl(touchEndX - touchStartX, touchEndY - touchStartY);
@@ -452,26 +463,49 @@ function handleTouchEnd(e) {
     touchStartY = null;
 }
 
-// Добавим новую функцию для обработки тапов
+// Заменим функцию handleTapControl на новую логику
 function handleTapControl(x, y) {
+    if (!isMobile) return;
+    
     const width = window.innerWidth;
     const height = window.innerHeight;
     
-    // Определяем зоны экрана
-    const leftZone = width * 0.33;
-    const rightZone = width * 0.66;
-    const topZone = height * 0.33;
-    const bottomZone = height * 0.66;
+    // Определяем зону управления внизу по центру
+    const controlZone = {
+        left: (width - GAME_CONFIG.CONTROL_ZONE.WIDTH) / 2,
+        right: (width + GAME_CONFIG.CONTROL_ZONE.WIDTH) / 2,
+        top: height - GAME_CONFIG.CONTROL_ZONE.HEIGHT - GAME_CONFIG.CONTROL_ZONE.BOTTOM_OFFSET,
+        bottom: height - GAME_CONFIG.CONTROL_ZONE.BOTTOM_OFFSET
+    };
     
-    // Определяем, в какую зону попал тап
-    if (x < leftZone && y > topZone && y < bottomZone) {
-        changeDirection('left');
-    } else if (x > rightZone && y > topZone && y < bottomZone) {
-        changeDirection('right');
-    } else if (y < topZone && x > leftZone && x < rightZone) {
-        changeDirection('up');
-    } else if (y > bottomZone && x > leftZone && x < rightZone) {
-        changeDirection('down');
+    // Проверяем, что тап был в зоне управления
+    if (x >= controlZone.left && x <= controlZone.right && 
+        y >= controlZone.top && y <= controlZone.bottom) {
+        
+        // Определяем центр зоны управления
+        const centerX = (controlZone.left + controlZone.right) / 2;
+        const centerY = (controlZone.top + controlZone.bottom) / 2;
+        
+        // Вычисляем смещение от центра
+        const deltaX = x - centerX;
+        const deltaY = y - centerY;
+        
+        // Определяем направление по большему смещению
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // Горизонтальное движение
+            if (deltaX > 0 && dx !== -1) {
+                changeDirection('right');
+            } else if (deltaX < 0 && dx !== 1) {
+                changeDirection('left');
+            }
+        } else {
+            // Вертикальное движение
+            if (deltaY > 0 && dy !== -1) {
+                changeDirection('down');
+            } else if (deltaY < 0 && dy !== 1) {
+                changeDirection('up');
+            }
+        }
     }
 }
 
