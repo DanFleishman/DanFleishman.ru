@@ -392,3 +392,41 @@ input:checked + .toggle-slider:before {
 .toggle-container input:checked + .toggle-slider:before {
     transform: translateX(30px);
 }
+
+.scale-settings {
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.scale-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#scaleSlider {
+    width: 80%;
+    max-width: 200px;
+    height: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--button-background);
+    outline: none;
+    border-radius: 2px;
+}
+
+#scaleSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--snake-head);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#scaleSlider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}

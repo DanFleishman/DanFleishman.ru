@@ -12,14 +12,22 @@ const GAME_CONFIG = {
     MIN_SPEED: 120,        // Увеличиваем минимальную задержку (было 100)
     SPEED_DECREASE: 1,     // Уменьшаем шаг ускорения (было 2)
     SPEED_RANGE: {
-        MIN: 150,  // Самая медленная начальная скорость
-        MAX: 350   // Самая быстрая начальная скорость
+        MIN: 350,  // Теперь это самая МЕДЛЕННАЯ скорость
+        MAX: 150   // Теперь это самая БЫСТРАЯ скорость
     },
     INITIAL_LENGTH: 3,
     SWIPE_THRESHOLD: 30,
     GRID_SIZE: 15,
     COUNTDOWN_TIME: 2,
-    HARD_WALLS: false  // Значение по умолчанию
+    HARD_WALLS: false,  // Значение по умолчанию
+    GRID_SCALE: {
+        MIN: 40,    // Теперь это самый МАЛЕНЬКИЙ размер
+        MAX: 12,    // Теперь это самый БОЛЬШОЙ размер
+        DEFAULT: {
+            MOBILE: 20,
+            DESKTOP: 30
+        }
+    }
 };
 
 let tileCountX, tileCountY;
@@ -111,7 +119,11 @@ function resizeCanvas() {
     canvas.width = maxWidth;
     canvas.height = maxHeight;
     
-    gridSize = Math.min(maxWidth / 30, maxHeight / 30);
+    // Получаем сохраненный масштаб или используем значение по умолчанию
+    const savedScale = Number(localStorage.getItem('gridScale')) || 
+        (isMobile ? GAME_CONFIG.GRID_SCALE.DEFAULT.MOBILE : GAME_CONFIG.GRID_SCALE.DEFAULT.DESKTOP);
+    
+    gridSize = Math.min(maxWidth / savedScale, maxHeight / savedScale);
     
     tileCountX = Math.floor(maxWidth / gridSize);
     tileCountY = Math.floor(maxHeight / gridSize);
@@ -280,8 +292,8 @@ function restartGame() {
     gameLoop = null;
     snake = null;
     
-    // Скрываем все окна
-    gameOverScreen.style.display = 'none';  // Используем style.display вместо classList
+    // Скрываем все окна, используем classList везде
+    gameOverScreen.classList.add('hidden');  // Заменяем style.display на classList
     pauseScreen.classList.add('hidden');
     
     // Сбрасываем состояние паузы
@@ -313,6 +325,8 @@ function resumeGame() {
 function openSettings() {
     const savedSpeed = localStorage.getItem('initialSpeed') || GAME_CONFIG.INITIAL_SPEED;
     const isHardWalls = localStorage.getItem('hardWalls') === 'true';
+    const savedScale = localStorage.getItem('gridScale') || 
+        (isMobile ? GAME_CONFIG.GRID_SCALE.DEFAULT.MOBILE : GAME_CONFIG.GRID_SCALE.DEFAULT.DESKTOP);
     
     const settingsHtml = `
         <div class="menu-box">
@@ -330,6 +344,19 @@ function openSettings() {
                 <div class="light-theme">
                     <span class="theme-text">Светлая</span>
                     <span>☀️</span>
+                </div>
+            </div>
+            <div class="scale-settings">
+                <p class="settings-label">Размер змейки:</p>
+                <div class="scale-control">
+                    <input type="range" 
+                           id="scaleSlider" 
+                           min="${GAME_CONFIG.GRID_SCALE.MIN}" 
+                           max="${GAME_CONFIG.GRID_SCALE.MAX}" 
+                           value="${savedScale}"
+                           step="1"
+                           oninput="updateGridScale(this.value)">
+                    <span id="scaleLabel">${Math.round((1/savedScale) * 100)}%</span>
                 </div>
             </div>
             <div class="speed-settings">
@@ -408,32 +435,61 @@ function handleTouchMove(e) {
 }
 
 function handleTouchEnd(e) {
-    if (!touchStartX || !touchStartY) return;
-
     const touchEndX = e.changedTouches[0].clientX;
     const touchEndY = e.changedTouches[0].clientY;
-
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-
-    if (Math.abs(deltaX) > GAME_CONFIG.SWIPE_THRESHOLD || Math.abs(deltaY) > GAME_CONFIG.SWIPE_THRESHOLD) {
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            if (deltaX > 0 && dx !== -1) {
-                changeDirection('right');
-            } else if (deltaX < 0 && dx !== 1) {
-                changeDirection('left');
-            }
-        } else {
-            if (deltaY > 0 && dy !== -1) {
-                changeDirection('down');
-            } else if (deltaY < 0 && dy !== 1) {
-                changeDirection('up');
-            }
-        }
+    
+    // Если это был короткий тап (начальные и конечные координаты близки)
+    if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+        handleTapControl(touchEndX, touchEndY);
+    } 
+    // Иначе обрабатываем как свайп
+    else if (Math.abs(touchEndX - touchStartX) > GAME_CONFIG.SWIPE_THRESHOLD || 
+             Math.abs(touchEndY - touchStartY) > GAME_CONFIG.SWIPE_THRESHOLD) {
+        handleSwipeControl(touchEndX - touchStartX, touchEndY - touchStartY);
     }
 
     touchStartX = null;
     touchStartY = null;
+}
+
+// Добавим новую функцию для обработки тапов
+function handleTapControl(x, y) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    // Определяем зоны экрана
+    const leftZone = width * 0.33;
+    const rightZone = width * 0.66;
+    const topZone = height * 0.33;
+    const bottomZone = height * 0.66;
+    
+    // Определяем, в какую зону попал тап
+    if (x < leftZone && y > topZone && y < bottomZone) {
+        changeDirection('left');
+    } else if (x > rightZone && y > topZone && y < bottomZone) {
+        changeDirection('right');
+    } else if (y < topZone && x > leftZone && x < rightZone) {
+        changeDirection('up');
+    } else if (y > bottomZone && x > leftZone && x < rightZone) {
+        changeDirection('down');
+    }
+}
+
+// Выделим обработку свайпов в отдельную функцию
+function handleSwipeControl(deltaX, deltaY) {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0 && dx !== -1) {
+            changeDirection('right');
+        } else if (deltaX < 0 && dx !== 1) {
+            changeDirection('left');
+        }
+    } else {
+        if (deltaY > 0 && dy !== -1) {
+            changeDirection('down');
+        } else if (deltaY < 0 && dy !== 1) {
+            changeDirection('up');
+        }
+    }
 }
 
 // Инициализация
@@ -530,7 +586,7 @@ function restartGameLoop() {
     gameLoop = setInterval(drawGame, gameSpeed);
 }
 
-// Обновляем функцию updateSpeedLabel
+// Изменим функцию updateSpeedLabel для обратного расчета
 function updateSpeedLabel(value) {
     const speedValue = Number(value);
     
@@ -559,4 +615,19 @@ function updateSpeedLabel(value) {
 function toggleWalls(enabled) {
     hardWalls = enabled;
     localStorage.setItem('hardWalls', enabled);
+}
+
+// Изменим функцию updateGridScale для обратного расчета
+function updateGridScale(value) {
+    const scaleValue = Number(value);
+    localStorage.setItem('gridScale', scaleValue);
+    
+    // Перерисовываем канвас с новым масштабом
+    resizeCanvas();
+    
+    // Обновляем label в настройках (теперь больший делитель = меньший процент)
+    const scaleLabel = document.getElementById('scaleLabel');
+    if (scaleLabel) {
+        scaleLabel.textContent = `${Math.round((1/value) * 100)}%`;
+    }
 } 
